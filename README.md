@@ -7,7 +7,7 @@ Tujuannya adalah untuk meningkatkan performa, fleksibilitas, keamanan, dan kemud
 
 ## 🚀 Tech Stack
 
-- **Frontend:** [Next.js](https://nextjs.org/) + [TypeScript](https://www.typescriptlang.org/)
+- **Frontend:** [Next.js](https://nextjs.org/) 
 - **Styling:** [Tailwind CSS](https://tailwindcss.com/)
 - **Backend / Database:** [Supabase](https://supabase.com/)
 - **Deployment:** [Vercel](https://vercel.com/) untuk frontend, [Supabase Hosting](https://supabase.com/) untuk backend
