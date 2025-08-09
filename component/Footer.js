@@ -1,4 +1,6 @@
 "use client";
+
+import Image from "next/image"; // <== ini yang kurang
 import {
   FaWhatsapp,
   FaFacebookF,
@@ -8,12 +10,14 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="text-center bg-[#282828] lg:p-10 p-4 mx-auto rounded-[20px] my-[25px] max-w-screen-xl">
+    <footer className="text-center bg-[#282828] lg:p-10 p-4 mx-auto rounded-[20px] my-12 max-w-screen-xl">
       <section className="grid lg:grid-cols-10 grid-cols-1 items-center lg:gap-4 gap-0 max-w-screen-xl mx-auto">
-        <img
-          src="https://gkibajemcileungsi.org/wp-content/uploads/2024/08/Blue-and-Orange-Circle-Global-Networking-Tech-Logo-6-x-5-cm-2.png"
+        <Image
+          src="/logo.png"
           className="w-[200px] mx-auto col-span-3"
           alt="GKI BAJEM Cileungsi"
+          width={200} // direkomendasikan kasih width & height
+          height={200}
         />
         <div className="col-span-7 text-white mt-5 lg:mt-auto">
           <h2 className="text-left text-2xl font-bold">GKI BAJEM Cileungsi</h2>
@@ -36,6 +40,7 @@ export default function Footer() {
           <a
             href="https://wa.me/6281214149253"
             target="_blank"
+            rel="noopener noreferrer"
             className="w-[45px] h-[45px] flex items-center justify-center rounded-full bg-[#F5F5F5] mr-[5px]"
           >
             <FaWhatsapp className="text-[#075e54]" size={20} />
@@ -43,6 +48,7 @@ export default function Footer() {
           <a
             href="https://www.facebook.com/groups/240898679587022/?ref=share&mibextid=lOuIew"
             target="_blank"
+            rel="noopener noreferrer"
             className="w-[45px] h-[45px] flex items-center justify-center rounded-full bg-[#F5F5F5] mr-[5px]"
           >
             <FaFacebookF className="text-[#0176ce]" size={20} />
@@ -50,6 +56,7 @@ export default function Footer() {
           <a
             href="https://www.youtube.com/@gkikrangganbajemcileungsi"
             target="_blank"
+            rel="noopener noreferrer"
             className="w-[45px] h-[45px] flex items-center justify-center rounded-full bg-[#F5F5F5] mr-[5px]"
           >
             <FaYoutube className="text-[#CD201F]" size={20} />
@@ -57,6 +64,7 @@ export default function Footer() {
           <a
             href="https://www.instagram.com/gkik_bajemcileungsi/"
             target="_blank"
+            rel="noopener noreferrer"
             className="w-[45px] h-[45px] flex items-center justify-center rounded-full bg-[#F5F5F5] mr-[5px]"
           >
             <FaInstagram className="text-[#F501CB]" size={20} />

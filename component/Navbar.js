@@ -13,8 +13,8 @@ export default function Navbar() {
   const isActive = (href) => pathname === href;
 
   return (
-    <header className="w-full font-sans fixed z-50">
-      <div className="max-w-screen-xl flex items-center lg:mx-auto justify-between my-8 px-8 py-4 bg-white rounded-md">
+    <header className="w-full fixed z-50">
+      <div className="max-w-screen-xl flex items-center lg:mx-auto justify-between md:my-8 my-0 px-8 py-4 bg-white rounded-md">
         <Link href="/" className="flex items-center">
           <Image
             src="/logo.png"
@@ -57,32 +57,32 @@ export default function Navbar() {
               >
                 <li>
                   <Link
-                    href="/media/video"
+                    href="/renungan"
                     className={`block px-4 py-2 hover:bg-gray-100 ${
-                      isActive("/media/video") ? "font-bold" : ""
+                      isActive("/renungan") ? "font-bold" : ""
                     }`}
                   >
-                    Video
+                    Renungan
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/media/foto"
+                    href="/warta"
                     className={`block px-4 py-2 hover:bg-gray-100 ${
-                      isActive("/media/foto") ? "font-bold" : ""
+                      isActive("/warta") ? "font-bold" : ""
                     }`}
                   >
-                    Foto
+                    e-Warta
                   </Link>
                 </li>
                 <li>
                   <Link
-                    href="/media/audio"
+                    href="/liturgi"
                     className={`block px-4 py-2 hover:bg-gray-100 ${
-                      isActive("/media/audio") ? "font-bold" : ""
+                      isActive("/liturgi") ? "font-bold" : ""
                     }`}
                   >
-                    Audio
+                    e-Liturgi
                   </Link>
                 </li>
               </ul>
@@ -122,7 +122,7 @@ export default function Navbar() {
         </nav>
 
         {isMenuOpen && (
-          <nav className="lg:hidden absolute top-28 left-0 w-full bg-white shadow-md border-t border-gray-200">
+          <nav className="lg:hidden absolute md:top-28 top-24 left-0 w-full bg-white shadow-md border-t border-gray-200">
             <ul className="flex flex-col gap-2 p-4">
               <li>
                 <Link
