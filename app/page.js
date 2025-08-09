@@ -1,5 +1,8 @@
-import Beranda from "./(public)/beranda/page";
-
-export default function Page() {
-  return <Beranda />;
+export const metadata = {
+  title: "Beranda - GKI Kranggan BAJEM Cileungsi",
+  description:
+    "Website official GKI Kranggan BAJEM Cielungs. Berisi informasi dan kegiatan dari jemaat GKI Kranggan Bajem",
+};
+export default function Beranda() {
+  return <h1>Beranda</h1>;
 }
