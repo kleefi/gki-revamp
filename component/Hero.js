@@ -49,7 +49,7 @@ export default function Hero() {
       </Swiper>
       <button
         ref={prevRef}
-        className="absolute top-1/2 left-4 -translate-y-1/2 z-40 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
+        className="absolute top-1/2 left-4 -translate-y-1/2 z-45 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
         aria-label="Previous Slide"
       >
         <FiArrowLeft className="cursor-pointer" size={24} />
@@ -57,7 +57,7 @@ export default function Hero() {
 
       <button
         ref={nextRef}
-        className="absolute top-1/2 right-4 -translate-y-1/2 z-40 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
+        className="absolute top-1/2 right-4 -translate-y-1/2 z-45 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
         aria-label="Next Slide"
       >
         <FiArrowRight className="cursor-pointer" size={24} />

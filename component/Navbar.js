@@ -8,9 +8,19 @@ import { FiMenu, FiX, FiChevronDown } from "react-icons/fi";
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMediaOpen, setIsMediaOpen] = useState(false);
+  const [showPersembahanModal, setShowPersembahanModal] = useState(false);
   const pathname = usePathname();
 
   const isActive = (href) => pathname === href;
+
+  const openPersembahanModal = () => {
+    setShowPersembahanModal(true);
+    setIsMenuOpen(false); // close menu if mobile menu open
+  };
+
+  const closePersembahanModal = () => {
+    setShowPersembahanModal(false);
+  };
 
   return (
     <header className="w-full fixed z-50">
@@ -28,6 +38,7 @@ export default function Navbar() {
         <button
           className="lg:hidden text-2xl"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
+          aria-label="Toggle menu"
         >
           {isMenuOpen ? <FiX /> : <FiMenu />}
         </button>
@@ -106,15 +117,15 @@ export default function Navbar() {
             </li>
             <li>
               <Link
-                href={"/hubungi-kami"}
-                className={isActive("/hubungi-kami") ? "font-bold" : ""}
+                href={"/kontak"}
+                className={isActive("/kontak") ? "font-bold" : ""}
               >
                 Hubungi Kami
               </Link>
             </li>
             <li
               className="cursor-pointer bg-blue-500 text-white rounded-lg px-4 py-2"
-              onClick={() => alert("untuk persembahan image nanti")}
+              onClick={openPersembahanModal}
             >
               Persembahan
             </li>
@@ -211,7 +222,7 @@ export default function Navbar() {
               <li
                 className="cursor-pointer bg-blue-500 text-white rounded-lg px-4 py-2 text-center"
                 onClick={() => {
-                  alert("untuk persembahan image nanti");
+                  openPersembahanModal();
                   setIsMenuOpen(false);
                 }}
               >
@@ -219,6 +230,35 @@ export default function Navbar() {
               </li>
             </ul>
           </nav>
+        )}
+
+        {showPersembahanModal && (
+          <div
+            style={{ backgroundColor: "rgba(0, 0, 0, 0.9)" }}
+            className="fixed inset-0 flex justify-center items-center z-50"
+            onClick={closePersembahanModal}
+          >
+            <div
+              className="bg-white rounded-xl p-6 relative max-w-3xl w-full mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={closePersembahanModal}
+                aria-label="Close modal"
+                className="absolute -top-5 -right-5 bg-white rounded-full p-2 text-gray-600 hover:text-gray-900 text-2xl cursor-pointer shadow-md"
+              >
+                <FiX />
+              </button>
+              <Image
+                src="/persembahan.jpg"
+                alt="Persembahan"
+                width={800}
+                height={500}
+                className="rounded-lg object-contain"
+                priority
+              />
+            </div>
+          </div>
         )}
       </div>
     </header>
