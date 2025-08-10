@@ -12,10 +12,12 @@ export default function Login() {
         style={{ backgroundImage: "url('/banner.avif')" }}
       >
         <div className="flex items-center w-[80%] flex-col leading-5 justify-center text-center bg-orange-100/90 p-8 rounded-md border border-[#1b1b1b]">
-          <h2 className="text-2xl mb-2">"Day one will become one day"</h2>
+          <h2 className="text-2xl mb-2">
+            &quot;Day one will become one day&quot;
+          </h2>
           <p>
             — just keep going. Slow progress is still progress. Do it until your
-            'day one' becomes the day you succeed. —
+            &apos;day one&apos; becomes the day you succeed. —
           </p>
         </div>
       </div>
