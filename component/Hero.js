@@ -18,20 +18,28 @@ export default function Hero() {
   const prevRef = useRef(null);
   const nextRef = useRef(null);
 
+  const showNavigation = slides.length > 1;
+
   return (
     <div className="relative w-full">
       <Swiper
         modules={[Navigation]}
-        navigation={{
-          prevEl: prevRef.current,
-          nextEl: nextRef.current,
-        }}
+        navigation={
+          showNavigation
+            ? {
+                prevEl: prevRef.current,
+                nextEl: nextRef.current,
+              }
+            : false
+        }
         onBeforeInit={(swiper) => {
-          swiper.params.navigation.prevEl = prevRef.current;
-          swiper.params.navigation.nextEl = nextRef.current;
+          if (showNavigation) {
+            swiper.params.navigation.prevEl = prevRef.current;
+            swiper.params.navigation.nextEl = nextRef.current;
+          }
         }}
-        loop={true}
-        pagination={false} // hilangkan dot
+        loop={showNavigation}
+        pagination={false}
         slidesPerView={1}
         spaceBetween={30}
       >
@@ -47,21 +55,26 @@ export default function Hero() {
           </SwiperSlide>
         ))}
       </Swiper>
-      <button
-        ref={prevRef}
-        className="absolute top-1/2 left-4 -translate-y-1/2 z-45 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
-        aria-label="Previous Slide"
-      >
-        <FiArrowLeft className="cursor-pointer" size={24} />
-      </button>
 
-      <button
-        ref={nextRef}
-        className="absolute top-1/2 right-4 -translate-y-1/2 z-45 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
-        aria-label="Next Slide"
-      >
-        <FiArrowRight className="cursor-pointer" size={24} />
-      </button>
+      {showNavigation && (
+        <>
+          <button
+            ref={prevRef}
+            className="absolute top-1/2 left-4 -translate-y-1/2 z-45 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
+            aria-label="Previous Slide"
+          >
+            <FiArrowLeft className="cursor-pointer" size={24} />
+          </button>
+
+          <button
+            ref={nextRef}
+            className="absolute top-1/2 right-4 -translate-y-1/2 z-45 p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
+            aria-label="Next Slide"
+          >
+            <FiArrowRight className="cursor-pointer" size={24} />
+          </button>
+        </>
+      )}
     </div>
   );
 }
