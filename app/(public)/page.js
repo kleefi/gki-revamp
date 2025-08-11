@@ -1,6 +1,6 @@
-import Hero from "@/component/Hero";
-import Card from "@/component/layouts/Card";
-import CardAlt from "@/component/layouts/CardAlt";
+import Hero from "@/components/public/Hero";
+import Card from "@/components/public/Card";
+import CardAlt from "@/components/public/CardAlt";
 import { FiUsers, FiBookOpen, FiCalendar } from "react-icons/fi";
 
 export const metadata = {

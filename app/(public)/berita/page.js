@@ -1,4 +1,4 @@
-import Card from "@/component/layouts/Card";
+import Card from "@/components/public/Card";
 
 export const metadata = {
   title: "Berita - GKI Kranggan BAJEM Cileungsi",

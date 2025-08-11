@@ -1,4 +1,4 @@
-import CardAlt from "@/component/layouts/CardAlt";
+import CardAlt from "@/components/public/CardAlt";
 
 export const metadata = {
   title: "e-Warta - GKI Kranggan BAJEM Cileungsi",
