@@ -7,7 +7,7 @@ import { FiMenu, FiX, FiChevronDown } from "react-icons/fi";
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isMediaOpen, setIsMediaOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState(null);
   const [showPersembahanModal, setShowPersembahanModal] = useState(false);
   const pathname = usePathname();
 
@@ -15,12 +15,30 @@ export default function Navbar() {
 
   const openPersembahanModal = () => {
     setShowPersembahanModal(true);
-    setIsMenuOpen(false); // close menu if mobile menu open
+    setIsMenuOpen(false);
   };
 
   const closePersembahanModal = () => {
     setShowPersembahanModal(false);
   };
+
+  // Menu utama + sub menu
+  const menuItems = [
+    { label: "Home", href: "/" },
+    {
+      label: "Media",
+      href: "#",
+      sub: [
+        { label: "Renungan", href: "/renungan" },
+        { label: "e-Warta", href: "/warta" },
+        { label: "e-Liturgi", href: "/liturgi" },
+      ],
+    },
+    { label: "Berita", href: "/berita" },
+    { label: "Galeri", href: "/galeri" },
+    { label: "Hubungi Kami", href: "/kontak" },
+    { label: "Persembahan", type: "button" },
+  ];
 
   return (
     <header className="w-full fixed z-50">
@@ -45,189 +63,139 @@ export default function Navbar() {
 
         <nav className="hidden lg:flex pr-[20px]">
           <ul className="flex flex-row gap-4 items-center relative">
-            <li>
-              <Link href={"/"} className={isActive("/") ? "font-bold" : ""}>
-                Home
-              </Link>
-            </li>
+            {menuItems.map((item, idx) => {
+              if (item.type === "button") {
+                return (
+                  <li
+                    key={idx}
+                    className="cursor-pointer bg-blue-500 text-white rounded-lg px-4 py-2"
+                    onClick={openPersembahanModal}
+                  >
+                    {item.label}
+                  </li>
+                );
+              }
 
-            <li className="group relative">
-              <Link
-                href={"/media"}
-                className={`flex items-center ${
-                  isActive("/media") ? "font-bold" : ""
-                }`}
-              >
-                Media
-                <FiChevronDown className="ml-1" />
-              </Link>
-              <ul
-                className="absolute left-0 top-full w-40 bg-white border border-gray-200 rounded-lg shadow-lg 
-                opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform translate-y-1 
-                transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50"
-              >
-                <li>
-                  <Link
-                    href="/renungan"
-                    className={`block px-4 py-2 hover:bg-gray-100 ${
-                      isActive("/renungan") ? "font-bold" : ""
-                    }`}
-                  >
-                    Renungan
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/warta"
-                    className={`block px-4 py-2 hover:bg-gray-100 ${
-                      isActive("/warta") ? "font-bold" : ""
-                    }`}
-                  >
-                    e-Warta
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/liturgi"
-                    className={`block px-4 py-2 hover:bg-gray-100 ${
-                      isActive("/liturgi") ? "font-bold" : ""
-                    }`}
-                  >
-                    e-Liturgi
-                  </Link>
-                </li>
-              </ul>
-            </li>
+              if (item.sub) {
+                return (
+                  <li key={idx} className="group relative">
+                    <Link
+                      href={item.href}
+                      className={`flex items-center ${
+                        isActive(item.href) ? "font-bold" : ""
+                      }`}
+                    >
+                      {item.label}
+                      <FiChevronDown className="ml-1" />
+                    </Link>
+                    <ul
+                      className="absolute left-0 top-full w-40 bg-white border border-gray-200 rounded-lg shadow-lg 
+                      opacity-0 group-hover:opacity-100 group-hover:translate-y-0 transform translate-y-1 
+                      transition-all duration-200 pointer-events-none group-hover:pointer-events-auto z-50"
+                    >
+                      {item.sub.map((subItem, subIdx) => (
+                        <li key={subIdx}>
+                          <Link
+                            href={subItem.href}
+                            className={`block px-4 py-2 hover:bg-gray-100 ${
+                              isActive(subItem.href) ? "font-bold" : ""
+                            }`}
+                          >
+                            {subItem.label}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li>
+                );
+              }
 
-            <li>
-              <Link
-                href={"/berita"}
-                className={isActive("/berita") ? "font-bold" : ""}
-              >
-                Berita
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={"/galeri"}
-                className={isActive("/galeri") ? "font-bold" : ""}
-              >
-                Galeri
-              </Link>
-            </li>
-            <li>
-              <Link
-                href={"/kontak"}
-                className={isActive("/kontak") ? "font-bold" : ""}
-              >
-                Hubungi Kami
-              </Link>
-            </li>
-            <li
-              className="cursor-pointer bg-blue-500 text-white rounded-lg px-4 py-2"
-              onClick={openPersembahanModal}
-            >
-              Persembahan
-            </li>
+              return (
+                <li key={idx}>
+                  <Link
+                    href={item.href}
+                    className={isActive(item.href) ? "font-bold" : ""}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
         {isMenuOpen && (
           <nav className="lg:hidden absolute md:top-28 top-24 left-0 w-full bg-white shadow-md border-t border-gray-200">
             <ul className="flex flex-col gap-2 p-4">
-              <li>
-                <Link
-                  href={"/"}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={isActive("/") ? "font-bold" : ""}
-                >
-                  Home
-                </Link>
-              </li>
+              {menuItems.map((item, idx) => {
+                if (item.type === "button") {
+                  return (
+                    <li
+                      key={idx}
+                      className="cursor-pointer bg-blue-500 text-white rounded-lg px-4 py-2 text-center"
+                      onClick={() => {
+                        openPersembahanModal();
+                        setIsMenuOpen(false);
+                      }}
+                    >
+                      {item.label}
+                    </li>
+                  );
+                }
 
-              <li>
-                <button
-                  onClick={() => setIsMediaOpen(!isMediaOpen)}
-                  className="flex justify-between items-center w-full"
-                >
-                  <span className={isActive("/media") ? "font-bold" : ""}>
-                    Media
-                  </span>
-                  <FiChevronDown
-                    className={`transition-transform ${
-                      isMediaOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                {isMediaOpen && (
-                  <ul className="ml-4 mt-1 flex flex-col gap-1">
-                    <li>
-                      <Link
-                        href="/media/video"
-                        onClick={() => setIsMenuOpen(false)}
-                        className={isActive("/media/video") ? "font-bold" : ""}
+                if (item.sub) {
+                  return (
+                    <li key={idx}>
+                      <button
+                        onClick={() =>
+                          setOpenDropdown(openDropdown === idx ? null : idx)
+                        }
+                        className="flex justify-between items-center w-full"
                       >
-                        Video
-                      </Link>
+                        <span
+                          className={isActive(item.href) ? "font-bold" : ""}
+                        >
+                          {item.label}
+                        </span>
+                        <FiChevronDown
+                          className={`transition-transform ${
+                            openDropdown === idx ? "rotate-180" : ""
+                          }`}
+                        />
+                      </button>
+                      {openDropdown === idx && (
+                        <ul className="ml-4 mt-1 flex flex-col gap-1">
+                          {item.sub.map((subItem, subIdx) => (
+                            <li key={subIdx}>
+                              <Link
+                                href={subItem.href}
+                                onClick={() => setIsMenuOpen(false)}
+                                className={
+                                  isActive(subItem.href) ? "font-bold" : ""
+                                }
+                              >
+                                {subItem.label}
+                              </Link>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </li>
-                    <li>
-                      <Link
-                        href="/media/foto"
-                        onClick={() => setIsMenuOpen(false)}
-                        className={isActive("/media/foto") ? "font-bold" : ""}
-                      >
-                        Foto
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="/media/audio"
-                        onClick={() => setIsMenuOpen(false)}
-                        className={isActive("/media/audio") ? "font-bold" : ""}
-                      >
-                        Audio
-                      </Link>
-                    </li>
-                  </ul>
-                )}
-              </li>
+                  );
+                }
 
-              <li>
-                <Link
-                  href={"/berita"}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={isActive("/berita") ? "font-bold" : ""}
-                >
-                  Berita
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={"/galeri"}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={isActive("/galeri") ? "font-bold" : ""}
-                >
-                  Galeri
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href={"/hubungi-kami"}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={isActive("/hubungi-kami") ? "font-bold" : ""}
-                >
-                  Hubungi Kami
-                </Link>
-              </li>
-              <li
-                className="cursor-pointer bg-blue-500 text-white rounded-lg px-4 py-2 text-center"
-                onClick={() => {
-                  openPersembahanModal();
-                  setIsMenuOpen(false);
-                }}
-              >
-                Persembahan
-              </li>
+                return (
+                  <li key={idx}>
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={isActive(item.href) ? "font-bold" : ""}
+                    >
+                      {item.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         )}
