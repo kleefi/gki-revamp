@@ -1,5 +1,5 @@
 "use client";
 
 export default function Page() {
-  return <Button>Click me</Button>;
+  return <button>Click me</button>;
 }
