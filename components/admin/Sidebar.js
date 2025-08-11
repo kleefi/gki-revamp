@@ -9,8 +9,9 @@ import {
   MdEventNote,
   MdAnnouncement,
   MdPhotoLibrary,
-  MdContacts,
+  MdMail,
   MdSettings,
+  MdLogout,
 } from "react-icons/md";
 
 const menuItems = [
@@ -20,7 +21,9 @@ const menuItems = [
   { label: "e-Liturgi", icon: MdEventNote, path: "/dashboard/liturgi" },
   { label: "Berita", icon: MdAnnouncement, path: "/dashboard/berita" },
   { label: "Galeri", icon: MdPhotoLibrary, path: "/dashboard/galeri" },
-  { label: "Kontak", icon: MdContacts, path: "/dashboard/kontak" },
+  { label: "Kontak", icon: MdMail, path: "/dashboard/kontak" },
+  { label: "Settings", icon: MdSettings, path: "/dashboard/settings" },
+  { label: "Sign out", icon: MdLogout, path: "/signout" },
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
@@ -65,31 +68,6 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
               </li>
             );
           })}
-        </ul>
-      </div>
-
-      <div className="px-3 pb-4 border-t border-gray-200 dark:border-gray-700">
-        <ul className="font-medium">
-          <li>
-            <Link
-              href="/dashboard/settings"
-              onClick={() => setSidebarOpen(false)}
-              className={`flex items-center p-2 rounded-lg group ${
-                pathname === "/dashboard/settings"
-                  ? "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white"
-                  : "text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-              }`}
-            >
-              <MdSettings
-                className={`w-5 h-5 transition duration-75 ${
-                  pathname === "/dashboard/settings"
-                    ? "text-gray-900 dark:text-white"
-                    : "text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
-                }`}
-              />
-              <span className="ms-3">Settings</span>
-            </Link>
-          </li>
         </ul>
       </div>
     </aside>
