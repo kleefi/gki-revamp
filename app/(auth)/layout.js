@@ -4,7 +4,7 @@ export default function AuthLayout({ children }) {
   return (
     <main>
       {children}
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
     </main>
   );
 }

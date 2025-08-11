@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
-
+import { useRouter } from "next/navigation";
+import { supabase } from "@/utils/supabase/client";
 export default function Navbar({ setSidebarOpen }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-
+  const router = useRouter();
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -20,7 +21,10 @@ export default function Navbar({ setSidebarOpen }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownOpen]);
-
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
   return (
     <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
       <div className="px-3 py-3 lg:px-5 lg:pl-3 flex items-center justify-between">
@@ -106,14 +110,14 @@ export default function Navbar({ setSidebarOpen }) {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    href="/signout"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="cursor-pointer w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
                     role="menuitem"
-                    onClick={() => setDropdownOpen(false)}
                   >
                     Sign out
-                  </Link>
+                  </button>
                 </li>
               </ul>
             </div>

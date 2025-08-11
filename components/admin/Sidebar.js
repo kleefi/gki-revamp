@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   MdDashboard,
   MdMenuBook,
@@ -13,6 +13,7 @@ import {
   MdSettings,
   MdLogout,
 } from "react-icons/md";
+import { supabase } from "@/utils/supabase/client";
 
 const menuItems = [
   { label: "Dashboard", icon: MdDashboard, path: "/dashboard" },
@@ -23,11 +24,17 @@ const menuItems = [
   { label: "Galeri", icon: MdPhotoLibrary, path: "/dashboard/galeri" },
   { label: "Kontak", icon: MdMail, path: "/dashboard/kontak" },
   { label: "Settings", icon: MdSettings, path: "/dashboard/settings" },
-  { label: "Sign out", icon: MdLogout, path: "/signout" },
+  { label: "Sign out", icon: MdLogout, path: null }, // path null karena tidak pakai Link
 ];
 
 export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    router.push("/login");
+  };
 
   return (
     <aside
@@ -43,28 +50,39 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
             const isActive =
               path === "/dashboard"
                 ? pathname === path
-                : pathname === path || pathname.startsWith(path + "/");
+                : path &&
+                  (pathname === path || pathname.startsWith(path + "/"));
 
             return (
-              <li key={path}>
-                <Link
-                  href={path}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center p-2 rounded-lg group ${
-                    isActive
-                      ? "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white"
-                      : "text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
-                  }`}
-                >
-                  <Icon
-                    className={`w-5 h-5 transition duration-75 ${
+              <li key={label}>
+                {label === "Sign out" ? (
+                  <button
+                    onClick={handleSignOut}
+                    className="cursor-pointer flex w-full items-center p-2 rounded-lg group text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
+                  >
+                    <Icon className="w-5 h-5 text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" />
+                    <span className="ms-3">{label}</span>
+                  </button>
+                ) : (
+                  <Link
+                    href={path}
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center p-2 rounded-lg group ${
                       isActive
-                        ? "text-gray-900 dark:text-white"
-                        : "text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                        ? "bg-gray-200 text-gray-900 dark:bg-gray-700 dark:text-white"
+                        : "text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700"
                     }`}
-                  />
-                  <span className="ms-3">{label}</span>
-                </Link>
+                  >
+                    <Icon
+                      className={`w-5 h-5 transition duration-75 ${
+                        isActive
+                          ? "text-gray-900 dark:text-white"
+                          : "text-gray-500 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white"
+                      }`}
+                    />
+                    <span className="ms-3">{label}</span>
+                  </Link>
+                )}
               </li>
             );
           })}
