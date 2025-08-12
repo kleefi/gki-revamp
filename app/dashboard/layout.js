@@ -10,7 +10,7 @@ export default function DashboardLayout({ children }) {
     <div>
       <Navbar setSidebarOpen={setSidebarOpen} />
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      {children}
+      <div className="mt-8">{children}</div>
     </div>
   );
 }

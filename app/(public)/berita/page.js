@@ -7,11 +7,11 @@ export const metadata = {
 };
 export default function Berita() {
   return (
-    <div className="max-w-screen-xl mx-auto pt-48">
+    <div className="max-w-screen-xl mx-auto md:pt-46 pt-30">
       <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
         Berita
       </h2>
-      <Card type="berita" />
+      <Card type="berita" limit={10} ctaLabel="Selengkapnya" />
     </div>
   );
 }

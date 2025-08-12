@@ -1,3 +1,3 @@
 export default function Loading() {
-  return <div class="loader mx-auto"></div>;
+  return <div className="loader mx-auto"></div>;
 }
