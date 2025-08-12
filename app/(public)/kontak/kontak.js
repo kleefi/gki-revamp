@@ -87,7 +87,11 @@ export default function Kontak() {
               <h3 className="text-xl font-semibold text-[#b2aaaa] mb-1">
                 Telp / WhatsApp
               </h3>
-              <p className="text-gray-600">+62 812-1414-9253</p>
+              <p className="text-gray-600">
+                <a href="https://wa.me/6281214149253" target="_blank">
+                  +62 812-1414-9253
+                </a>
+              </p>
             </div>
           </div>
 
@@ -99,7 +103,11 @@ export default function Kontak() {
               <h3 className="text-xl font-semibold text-[#b2aaaa] mb-1">
                 Email
               </h3>
-              <p className="text-gray-600">info@gkikranggan.id</p>
+              <p className="text-gray-600">
+                <a href="mailto:adm.bajemgkik@gmail.com">
+                  adm.bajemgkik@gmail.com
+                </a>
+              </p>
             </div>
           </div>
         </div>
