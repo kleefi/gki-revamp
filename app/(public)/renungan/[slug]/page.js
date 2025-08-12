@@ -6,7 +6,7 @@ export const metadata = {
 };
 export default function DetailPosts() {
   return (
-    <div className="max-w-screen-xl mx-auto md:pt-48 pt-28 md:px-0 px-8">
+    <div className="max-w-screen-xl mx-auto md:pt-46 pt-30 md:px-0 px-8">
       <Slug />
     </div>
   );
