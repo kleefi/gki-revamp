@@ -39,7 +39,7 @@ export default function Sidebar({ sidebarOpen, setSidebarOpen }) {
   return (
     <aside
       id="logo-sidebar"
-      className={`fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700
+      className={`fixed top-0 left-0 z-40 w-64 h-screen pt-24 transition-transform bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700
         ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} 
         sm:translate-x-0 flex flex-col`}
       aria-label="Sidebar"

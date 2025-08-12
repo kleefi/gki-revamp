@@ -1,6 +1,5 @@
 import Link from "next/link";
 import ListBerita from "./berita";
-import Berita from "./berita";
 
 export const metadata = {
   title: "Berita - GKI Kranggan BAJEM Cileungsi",
