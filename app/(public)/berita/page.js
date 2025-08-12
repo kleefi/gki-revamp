@@ -11,7 +11,7 @@ export default function Berita() {
       <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
         Berita
       </h2>
-      <Card />
+      <Card type="berita" />
     </div>
   );
 }

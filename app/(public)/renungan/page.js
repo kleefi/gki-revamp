@@ -11,7 +11,7 @@ export default function Renungan() {
       <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
         Renungan
       </h2>
-      <Card type="renungan" />
+      <Card type="renungan" limit={10} ctaLabel="Selengkapnya" />
     </div>
   );
 }

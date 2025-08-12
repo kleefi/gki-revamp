@@ -49,7 +49,12 @@ export default function Beranda() {
         <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
           Renungan
         </h2>
-        <Card />
+        <Card
+          type="renungan"
+          limit="3"
+          ctaLabel="Selengkapnya"
+          showPagination={false}
+        />
       </div>
       <div className="bg-gray-100 mb-16">
         <div className="max-w-screen-xl mx-auto py-8">

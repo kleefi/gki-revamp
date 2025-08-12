@@ -4,28 +4,35 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 
-export default function Card({ type }) {
+export default function Card({ type, limit, ctaLabel, showPagination = true }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
 
   useEffect(() => {
     if (type) {
-      fetchPosts();
+      fetchPosts(page);
     }
-  }, [type]);
+  }, [type, page, limit]);
 
-  async function fetchPosts() {
+  async function fetchPosts(currentPage) {
     setLoading(true);
-    const { data, error } = await supabase
+    const from = (currentPage - 1) * limit;
+    const to = from + limit - 1;
+
+    const { data, error, count } = await supabase
       .from("posts")
-      .select("id, title, created_at, image_url, slug")
+      .select("id, title, created_at, image_url, slug", { count: "exact" })
       .eq("type", type)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .range(from, to);
 
     if (error) {
       console.error("Error fetching posts:", error);
     } else {
       setPosts(data);
+      setTotalPosts(count || 0);
     }
     setLoading(false);
   }
@@ -34,40 +41,61 @@ export default function Card({ type }) {
   if (posts.length === 0) return <p>Tidak ada data {type}</p>;
 
   return (
-    <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
-      {posts.map((post) => (
-        <div
-          key={post.id}
-          className="rounded-md bg-white p-4 flex mx-auto flex-col md:w-full w-11/12"
-        >
-          <div className="w-full mx-auto">
-            <Image
-              className="object-cover"
-              src={post.image_url || "/default.jpg"}
-              height={50}
-              width={450}
-              alt={post.title}
-            />
+    <>
+      <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
+        {posts.map((post) => (
+          <div
+            key={post.id}
+            className="rounded-md bg-white p-4 flex mx-auto flex-col md:w-full w-11/12"
+          >
+            <div className="w-full mx-auto">
+              <Image
+                className="object-cover"
+                src={post.image_url || "/default.jpg"}
+                height={50}
+                width={450}
+                alt={post.title}
+              />
+            </div>
+            <div>
+              <h3 className="text-xl font-semibold mb-2 mt-2">{post.title}</h3>
+              <span className="inline-block pb-2">
+                {new Date(post.created_at).toLocaleDateString("id-ID", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </span>
+              <p className="text-gray-600">{post.excerpt}</p>
+              <Link
+                className="inline-block rounded-md my-4 py-2 px-4 bg-[#0176CE] text-white font-bold"
+                href={`/${type}/${post.slug}`}
+              >
+                {ctaLabel}
+              </Link>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xl font-semibold mb-2 mt-2">{post.title}</h3>
-            <span className="inline-block pb-2">
-              {new Date(post.created_at).toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
-            </span>
-            <p className="text-gray-600">{post.excerpt}</p>
-            <Link
-              className="inline-block rounded-md my-4 py-2 px-4 bg-[#0176CE] text-white font-bold"
-              href={`/${type}/${post.slug}`}
-            >
-              Selengkapnya
-            </Link>
-          </div>
+        ))}
+      </div>
+      {showPagination && totalPosts > limit && (
+        <div className="flex justify-center mt-8 space-x-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
+          >
+            Prev
+          </button>
+          <span className="px-4 py-2">Halaman {page}</span>
+          <button
+            onClick={() => setPage((p) => (p * limit < totalPosts ? p + 1 : p))}
+            disabled={page * limit >= totalPosts}
+            className="px-4 py-2 border rounded disabled:opacity-50 cursor-pointer"
+          >
+            Next
+          </button>
         </div>
-      ))}
-    </div>
+      )}
+    </>
   );
 }
