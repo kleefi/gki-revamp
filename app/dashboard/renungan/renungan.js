@@ -1,157 +1,163 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
+import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export default function PostMinimal() {
-  const [title, setTitle] = useState("");
-  const [cta, setCta] = useState("");
-  const [type, setType] = useState("renungan");
-  const [content, setContent] = useState("");
-  const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+export default function ListRenungan() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPosts, setTotalPosts] = useState(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const pageSize = 10;
+  const router = useRouter();
 
-  const createSlug = (text) =>
-    text
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9\-]/g, "");
+  useEffect(() => {
+    fetchPosts();
+  }, [currentPage, searchTerm]);
 
-  const slug = createSlug(title);
-
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    if (selectedFile) {
-      setPreviewUrl(URL.createObjectURL(selectedFile));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  async function fetchPosts() {
     setLoading(true);
-    setMessage("");
 
-    try {
-      let imagePath = null;
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize - 1;
 
-      if (file) {
-        const filePath = `${type}/${slug}-${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("images")
-          .upload(filePath, file);
+    // Hitung total data sesuai search
+    const { count } = await supabase
+      .from("posts")
+      .select("*", { count: "exact", head: true })
+      .eq("type", "renungan")
+      .ilike("title", `%${searchTerm}%`);
 
-        if (uploadError) throw uploadError;
+    setTotalPosts(count || 0);
 
-        const { data: publicUrlData } = supabase.storage
-          .from("images")
-          .getPublicUrl(filePath);
+    // Ambil data sesuai range & search
+    const { data, error } = await supabase
+      .from("posts")
+      .select("id, title, slug, created_at, type")
+      .eq("type", "renungan")
+      .ilike("title", `%${searchTerm}%`)
+      .order("created_at", { ascending: false })
+      .range(start, end);
 
-        imagePath = publicUrlData.publicUrl;
-      }
-
-      const { error: insertError } = await supabase.from("posts").insert([
-        {
-          title,
-          type,
-          slug,
-          content,
-          cta_link: cta, // mapping variabel cta ke kolom cta_link
-          image_url: imagePath,
-        },
-      ]);
-
-      if (insertError) throw insertError;
-
-      setMessage("Berhasil menyimpan data!");
-      setTitle("");
-      setCta(""); // reset CTA juga
-      setType("renungan");
-      setContent("");
-      setFile(null);
-      setPreviewUrl("");
-    } catch (error) {
-      setMessage(`Error: ${error.message}`);
-    } finally {
-      setLoading(false);
+    if (error) {
+      console.error("Error fetching posts:", error);
+    } else {
+      setPosts(data);
     }
-  };
+    setLoading(false);
+  }
+
+  function handleEdit(id) {
+    router.push(`/renungan/edit/${id}`);
+  }
+
+  async function handleDelete(id) {
+    if (!confirm("Yakin mau hapus data ini?")) return;
+    const { error } = await supabase.from("posts").delete().eq("id", id);
+
+    if (error) {
+      console.error("Error deleting post:", error);
+    } else {
+      setPosts((prev) => prev.filter((post) => post.id !== id));
+    }
+  }
+
+  const totalPages = Math.ceil(totalPosts / pageSize);
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 bg-white rounded-lg shadow">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block font-semibold">Judul</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-semibold">CTA Link</label>
-            <input
-              type="text"
-              value={cta}
-              onChange={(e) => setCta(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Isi</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              rows={6}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Gambar</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="w-full"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center">
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="w-full rounded-lg shadow"
-            />
-          ) : (
-            <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded-lg">
-              <span className="text-gray-500">Preview gambar</span>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Menyimpan..." : "Simpan"}
-          </button>
-        </div>
+    <div className="p-4">
+      <div className="mb-4 flex justify-between">
+        <input
+          type="text"
+          placeholder="Cari judul renungan..."
+          value={searchTerm}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+            setCurrentPage(1); // reset ke page 1 setiap search berubah
+          }}
+          className="border px-3 py-2 rounded w-full md:w-1/3"
+        />
       </div>
 
-      {message && (
-        <p className="mt-4 text-center font-medium text-green-600">{message}</p>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="text-left px-4 py-2 md:w-2/3">Title</th>
+                <th className="px-4 py-2 text-left">Date</th>
+                <th className="px-4 py-2 text-left">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {posts.length > 0 ? (
+                posts.map((item) => (
+                  <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="text-left px-4 py-2">{item.title}</td>
+                    <td className="text-left px-4 py-2">
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="text-left px-4 py-2 space-x-2">
+                      <Link
+                        href={`/renungan/${item.slug}`}
+                        target="_blank"
+                        className="cursor-pointer bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded inline-flex items-center gap-1"
+                      >
+                        <FaEye /> View
+                      </Link>
+                      <button
+                        onClick={() => handleEdit(item.id)}
+                        className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded inline-flex items-center gap-1"
+                      >
+                        <FaEdit /> Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(item.id)}
+                        className="cursor-pointer bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded inline-flex items-center gap-1"
+                      >
+                        <FaTrash /> Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3" className="text-center py-4">
+                    Tidak ada data
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+
+          {totalPages > 1 && (
+            <div className="flex justify-center items-center mt-4 gap-2">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
+              >
+                Prev
+              </button>
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => p + 1)}
+                className="px-3 py-1 border rounded disabled:opacity-50 cursor-pointer"
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </>
       )}
-    </form>
+    </div>
   );
 }

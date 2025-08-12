@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { toast } from "react-hot-toast";
+import Image from "next/image";
 
 export const metadata = {
   title: "Register - GKI Kranggan BAJEM Cileungsi",
@@ -76,9 +77,13 @@ export default function Register() {
 
       <div className="w-[70%] mx-auto md:block md:h-auto h-screen flex items-center justify-center">
         <form className="w-full space-y-6" onSubmit={handleSubmit}>
-          <div className="text-center text-gray-600 text-lg font-semibold">
-            LOGO
-          </div>
+          <Image
+            src="/logo.png"
+            alt="Logo"
+            width={140}
+            height={40}
+            className="mx-auto"
+          />
 
           <div>
             <label className="block font-medium text-sm text-gray-700">

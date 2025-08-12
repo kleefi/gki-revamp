@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import Image from "next/image";
 export default function Navbar({ setSidebarOpen }) {
+  const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
   const router = useRouter();
@@ -21,6 +23,34 @@ export default function Navbar({ setSidebarOpen }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownOpen]);
+  useEffect(() => {
+    async function getUser() {
+      // Ambil user auth
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      // Ambil name dari tabel users
+      const { data, error } = await supabase
+        .from("users")
+        .select("name")
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching name:", error);
+        setUser({ ...user, name: null });
+      } else {
+        setUser({ ...user, name: data?.name });
+      }
+    }
+
+    getUser();
+  }, []);
+
+  if (!user) return null;
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/login");
@@ -51,10 +81,14 @@ export default function Navbar({ setSidebarOpen }) {
               />
             </svg>
           </button>
-          <Link href="/" className="flex ms-2 md:me-24">
-            <span className="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">
-              LOGO
-            </span>
+          <Link href="/" className="flex ms-2 md:me-24 items-center">
+            <Image
+              src="/logo.png"
+              alt="Logo"
+              width={140}
+              height={40}
+              className="mr-2"
+            />
           </Link>
         </div>
 
@@ -82,10 +116,10 @@ export default function Navbar({ setSidebarOpen }) {
             >
               <div className="px-4 py-3" role="none">
                 <p className="text-sm text-gray-900 dark:text-white">
-                  Neil Sims
+                  {user.name || "Guest"}
                 </p>
                 <p className="text-sm font-medium text-gray-900 truncate dark:text-gray-300">
-                  neil.sims@flowbite.com
+                  {user.email}
                 </p>
               </div>
               <ul className="py-1" role="none">
