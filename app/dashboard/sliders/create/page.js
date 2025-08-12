@@ -12,7 +12,7 @@ export default function ListWarta() {
         <h1 className="font-bold md:text-3xl text-2xl mb-8">
           Create Sliders /{" "}
           <span className="text-lg bg-blue-600 px-4 py-3 text-white rounded-md md:inline-block block">
-            <Link href="/dashboard/warta/">List Sliders</Link>
+            <Link href="/dashboard/sliders/">List Sliders</Link>
           </span>
         </h1>
         <CreateSliders />

@@ -54,15 +54,43 @@ export default function ListRenungan() {
   function handleEdit(id) {
     router.push(`/renungan/edit/${id}`);
   }
-
   async function handleDelete(id) {
     if (!confirm("Yakin mau hapus data ini?")) return;
-    const { error } = await supabase.from("posts").delete().eq("id", id);
+    try {
+      const { data: sliderData, error: fetchError } = await supabase
+        .from("posts")
+        .select("image_url") // atau nama kolom yang menyimpan path gambar
+        .eq("id", id)
+        .single();
 
-    if (error) {
-      console.error("Error deleting post:", error);
-    } else {
+      if (fetchError) throw fetchError;
+
+      const urlParts = sliderData.image_url.split("/");
+      const fileName = urlParts[urlParts.length - 1];
+      const folderPath = urlParts
+        .slice(urlParts.indexOf("images") + 1, -1)
+        .join("/");
+      const fullPath = folderPath ? `${folderPath}/${fileName}` : fileName;
+
+      // 3. Hapus gambar dari storage
+      const { error: storageError } = await supabase.storage
+        .from("images") // ganti dengan nama bucket Anda
+        .remove([fullPath]);
+
+      if (storageError) throw storageError;
+
+      // 4. Hapus data dari tabel
+      const { error: deleteError } = await supabase
+        .from("posts")
+        .delete()
+        .eq("id", id);
+
+      if (deleteError) throw deleteError;
+
+      // 5. Update state
       setPosts((prev) => prev.filter((post) => post.id !== id));
+    } catch (error) {
+      console.error("Error deleting post and image:", error);
     }
   }
 

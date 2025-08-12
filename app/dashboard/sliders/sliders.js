@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import Loading from "@/components/public/Loading";
 
 export default function ListSliders() {
@@ -55,15 +54,44 @@ export default function ListSliders() {
 
   async function handleDelete(id) {
     if (!confirm("Yakin mau hapus data ini?")) return;
-    const { error } = await supabase.from("sliders").delete().eq("id", id);
 
-    if (error) {
-      console.error("Error deleting post:", error);
-    } else {
+    try {
+      const { data: sliderData, error: fetchError } = await supabase
+        .from("sliders")
+        .select("image_url") // atau nama kolom yang menyimpan path gambar
+        .eq("id", id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      const urlParts = sliderData.image_url.split("/");
+      const fileName = urlParts[urlParts.length - 1];
+      const folderPath = urlParts
+        .slice(urlParts.indexOf("images") + 1, -1)
+        .join("/");
+      const fullPath = folderPath ? `${folderPath}/${fileName}` : fileName;
+
+      // 3. Hapus gambar dari storage
+      const { error: storageError } = await supabase.storage
+        .from("images") // ganti dengan nama bucket Anda
+        .remove([fullPath]);
+
+      if (storageError) throw storageError;
+
+      // 4. Hapus data dari tabel
+      const { error: deleteError } = await supabase
+        .from("sliders")
+        .delete()
+        .eq("id", id);
+
+      if (deleteError) throw deleteError;
+
+      // 5. Update state
       setsliders((prev) => prev.filter((post) => post.id !== id));
+    } catch (error) {
+      console.error("Error deleting post and image:", error);
     }
   }
-
   const totalPages = Math.ceil(totalsliders / pageSize);
 
   return (
