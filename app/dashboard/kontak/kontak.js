@@ -5,18 +5,18 @@ import { FaTrash } from "react-icons/fa";
 import Loading from "@/components/public/Loading";
 
 export default function ListKontak() {
-  const [posts, setPosts] = useState([]);
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPosts, setTotalPosts] = useState(0);
+  const [totalcontacts, setTotalContacts] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 10;
 
   useEffect(() => {
-    fetchPosts();
+    fetchcontacts();
   }, [currentPage, searchTerm]);
 
-  async function fetchPosts() {
+  async function fetchcontacts() {
     setLoading(true);
 
     const start = (currentPage - 1) * pageSize;
@@ -28,7 +28,7 @@ export default function ListKontak() {
       .select("*", { count: "exact", head: true })
       .ilike("name", `%${searchTerm}%`);
 
-    setTotalPosts(count || 0);
+    setTotalContacts(count || 0);
 
     // Ambil data sesuai range & search
     const { data, error } = await supabase
@@ -39,25 +39,25 @@ export default function ListKontak() {
       .range(start, end);
 
     if (error) {
-      console.error("Error fetching posts:", error);
+      console.error("Error fetching contacts:", error);
     } else {
-      setPosts(data);
+      setContacts(data);
     }
     setLoading(false);
   }
 
   async function handleDelete(id) {
     if (!confirm("Yakin mau hapus data ini?")) return;
-    const { error } = await supabase.from("posts").delete().eq("id", id);
+    const { error } = await supabase.from("contacts").delete().eq("id", id);
 
     if (error) {
-      console.error("Error deleting post:", error);
+      console.error("Error deleting contact:", error);
     } else {
-      setPosts((prev) => prev.filter((post) => post.id !== id));
+      setContacts((prev) => prev.filter((contact) => contact.id !== id));
     }
   }
 
-  const totalPages = Math.ceil(totalPosts / pageSize);
+  const totalPages = Math.ceil(totalcontacts / pageSize);
 
   return (
     <div className="p-4">
@@ -90,8 +90,8 @@ export default function ListKontak() {
               </tr>
             </thead>
             <tbody>
-              {posts.length > 0 ? (
-                posts.map((item) => (
+              {contacts.length > 0 ? (
+                contacts.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50">
                     <td className="text-left px-4 py-2">{item.name}</td>
                     <td className="text-left px-4 py-2">{item.phone ?? "-"}</td>
@@ -112,7 +112,7 @@ export default function ListKontak() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="3" className="text-center py-4">
+                  <td colSpan="6" className="text-center py-4">
                     Tidak ada data
                   </td>
                 </tr>
