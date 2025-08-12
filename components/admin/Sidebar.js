@@ -12,11 +12,13 @@ import {
   MdMail,
   MdSettings,
   MdLogout,
+  MdSlideshow,
 } from "react-icons/md";
 import { supabase } from "@/utils/supabase/client";
 
 const menuItems = [
   { label: "Dashboard", icon: MdDashboard, path: "/dashboard" },
+  { label: "Sliders", icon: MdSlideshow, path: "/dashboard/sliders" },
   { label: "Renungan", icon: MdMenuBook, path: "/dashboard/renungan" },
   { label: "e-Warta", icon: MdDescription, path: "/dashboard/warta" },
   { label: "e-Liturgi", icon: MdEventNote, path: "/dashboard/liturgi" },
