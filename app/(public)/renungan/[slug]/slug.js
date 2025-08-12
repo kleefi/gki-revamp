@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { supabase } from "@/utils/supabase/client";
+import Loading from "@/components/public/Loading";
 
 export default function Slug() {
   const { slug } = useParams();
@@ -30,7 +31,7 @@ export default function Slug() {
     setLoading(false);
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
   if (!post) return <p>Post tidak ditemukan</p>;
 
   return (

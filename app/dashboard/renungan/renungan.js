@@ -4,6 +4,7 @@ import { supabase } from "@/utils/supabase/client";
 import { FaEye, FaEdit, FaTrash } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Loading from "@/components/public/Loading";
 
 export default function ListRenungan() {
   const [posts, setPosts] = useState([]);
@@ -83,7 +84,7 @@ export default function ListRenungan() {
       </div>
 
       {loading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
         <>
           <table className="w-full text-sm">

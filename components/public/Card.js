@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
+import Loading from "./Loading";
 
 export default function Card({ type, limit, ctaLabel, showPagination = true }) {
   const [posts, setPosts] = useState([]);
@@ -37,7 +38,7 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
     setLoading(false);
   }
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
   if (posts.length === 0) return <p>Tidak ada data {type}</p>;
 
   return (
