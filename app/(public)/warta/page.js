@@ -11,7 +11,7 @@ export default function Warta() {
       <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
         Warta
       </h2>
-      <Card type="ewarta" limit={10} ctaLabel="Selengkapnya" />
+      <Card type="ewarta" limit={6} ctaLabel="Selengkapnya" />
     </div>
   );
 }

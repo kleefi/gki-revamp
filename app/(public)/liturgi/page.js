@@ -11,7 +11,7 @@ export default function Liturgi() {
       <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
         Liturgi
       </h2>
-      <Card type="eliturgi" limit={10} ctaLabel="Selengkapnya" />
+      <Card type="eliturgi" limit={6} ctaLabel="Selengkapnya" />
     </div>
   );
 }

@@ -67,7 +67,7 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
             </div>
             <div>
               <h3 className="text-xl font-semibold mb-2 mt-2">{post.title}</h3>
-              <span className="inline-block pb-2">
+              <span className="block pb-2">
                 {new Date(post.created_at).toLocaleDateString("id-ID", {
                   day: "numeric",
                   month: "long",
@@ -75,7 +75,7 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
                 })}
               </span>
               <div
-                className="prose max-w-none"
+                className="prose max-w-none hidden"
                 dangerouslySetInnerHTML={{
                   __html: truncateWords(post.content, 15),
                 }}
