@@ -59,27 +59,33 @@ export default function ListLiturgi() {
     try {
       const { data: sliderData, error: fetchError } = await supabase
         .from("posts")
-        .select("image_url") // atau nama kolom yang menyimpan path gambar
+        .select("image_url")
         .eq("id", id)
         .single();
 
       if (fetchError) throw fetchError;
 
-      const urlParts = sliderData.image_url.split("/");
-      const fileName = urlParts[urlParts.length - 1];
-      const folderPath = urlParts
-        .slice(urlParts.indexOf("images") + 1, -1)
-        .join("/");
-      const fullPath = folderPath ? `${folderPath}/${fileName}` : fileName;
+      // 2. Kalau ada gambar, coba hapus dari storage
+      if (sliderData?.image_url) {
+        try {
+          const urlParts = sliderData.image_url.split("/");
+          const fileName = urlParts[urlParts.length - 1];
+          const folderPath = urlParts
+            .slice(urlParts.indexOf("images") + 1, -1)
+            .join("/");
+          const fullPath = folderPath ? `${folderPath}/${fileName}` : fileName;
 
-      // 3. Hapus gambar dari storage
-      const { error: storageError } = await supabase.storage
-        .from("images") // ganti dengan nama bucket Anda
-        .remove([fullPath]);
+          const { error: storageError } = await supabase.storage
+            .from("images") // ganti dengan nama bucket Anda
+            .remove([fullPath]);
 
-      if (storageError) throw storageError;
+          if (storageError) console.warn("Gagal hapus gambar:", storageError);
+        } catch (imgErr) {
+          console.warn("Error saat parsing atau hapus gambar:", imgErr);
+        }
+      }
 
-      // 4. Hapus data dari tabel
+      // 3. Hapus data dari tabel
       const { error: deleteError } = await supabase
         .from("posts")
         .delete()
@@ -87,10 +93,10 @@ export default function ListLiturgi() {
 
       if (deleteError) throw deleteError;
 
-      // 5. Update state
+      // 4. Update state lokal
       setPosts((prev) => prev.filter((post) => post.id !== id));
     } catch (error) {
-      console.error("Error deleting post and image:", error);
+      console.error("Error deleting post and/or image:", error);
     }
   }
 

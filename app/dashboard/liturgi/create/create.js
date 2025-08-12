@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
+import TiptapEditor from "@/components/admin/TiptapEditor";
 
 export default function CreateLiturgi() {
   const [title, setTitle] = useState("");
@@ -108,12 +109,7 @@ export default function CreateLiturgi() {
 
           <div>
             <label className="block font-semibold">Isi</label>
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              rows={6}
-            />
+            <TiptapEditor content={content} onChange={setContent} />
           </div>
 
           <div>

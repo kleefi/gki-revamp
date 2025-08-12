@@ -1,5 +1,40 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+p {
+  padding-bottom: 1rem !important;
+}
+.ProseMirror {
+  padding: 10px 5px !important;
+}
+.tiptap:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: transparent;
+}
+/* Contoh CSS dasar untuk Tiptap */
+.tiptap p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #adb5bd;
+  pointer-events: none;
+  height: 0;
+}
+
+.tiptap h1,
+.tiptap h2,
+.tiptap h3 {
+  line-height: 1.1;
+}
+
+.tiptap blockquote {
+  padding-left: 1rem;
+  border-left: 2px solid #ddd;
+}
+
+.tiptap ul,
+.tiptap ol {
+  padding: 0 1rem;
+}
 .loader {
   width: 45px;
   aspect-ratio: 1;

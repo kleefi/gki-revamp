@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { supabase } from "@/utils/supabase/client";
+import TiptapEditor from "@/components/admin/TiptapEditor";
 
 export default function CreateRenungan() {
   const [title, setTitle] = useState("");
@@ -108,12 +109,14 @@ export default function CreateRenungan() {
 
           <div>
             <label className="block font-semibold">Isi</label>
+            <TiptapEditor content={content} onChange={setContent} />
+            {/* 
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="w-full border rounded px-3 py-2"
               rows={6}
-            />
+            /> */}
           </div>
 
           <div>

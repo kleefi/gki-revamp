@@ -74,7 +74,12 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
                   year: "numeric",
                 })}
               </span>
-              <p className="text-gray-600">{truncateWords(post.content, 15)}</p>
+              <div
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: truncateWords(post.content, 15),
+                }}
+              />
               <Link
                 className="inline-block rounded-md my-4 py-2 px-4 bg-[#0176CE] text-white font-bold"
                 href={`/${type}/${post.slug}`}
