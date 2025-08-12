@@ -11,7 +11,8 @@ export default function Navbar() {
   const [showPersembahanModal, setShowPersembahanModal] = useState(false);
   const pathname = usePathname();
 
-  const isActive = (href) => pathname === href;
+  const isActive = (href) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   const openPersembahanModal = () => {
     setShowPersembahanModal(true);
@@ -42,7 +43,7 @@ export default function Navbar() {
 
   return (
     <header className="w-full fixed z-50">
-      <div className="max-w-screen-xl flex items-center lg:mx-auto justify-between md:my-8 my-0 px-8 py-4 bg-white rounded-md">
+      <div className="max-w-screen-xl flex items-center lg:mx-auto justify-between md:my-8 my-0 px-8 py-4 bg-white rounded-md shadow-lg">
         <Link href="/" className="flex items-center">
           <Image
             src="/logo.png"

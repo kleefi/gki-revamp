@@ -1,37 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { supabase } from "@/utils/supabase/client";
-import Loading from "@/components/public/Loading";
 
-export default function Slug() {
-  const { slug } = useParams();
-  const [post, setPost] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (slug) {
-      fetchPost();
-    }
-  }, [slug]);
-
-  async function fetchPost() {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("posts")
-      .select("*")
-      .eq("slug", slug)
-      .single();
-
-    if (error) {
-      console.error("Error fetching post:", error);
-    } else {
-      setPost(data);
-    }
-    setLoading(false);
-  }
-
-  if (loading) return <Loading />;
+export default function Slug({ post }) {
   if (!post) return <p>Post tidak ditemukan</p>;
 
   return (

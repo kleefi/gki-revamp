@@ -24,7 +24,9 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
 
     const { data, error, count } = await supabase
       .from("posts")
-      .select("id, title, created_at, image_url, slug", { count: "exact" })
+      .select("id, title, created_at, image_url, slug,content", {
+        count: "exact",
+      })
       .eq("type", type)
       .order("created_at", { ascending: false })
       .range(from, to);
@@ -40,7 +42,12 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
 
   if (loading) return <Loading />;
   if (posts.length === 0) return <p>Tidak ada data {type}</p>;
-
+  function truncateWords(text, wordLimit) {
+    if (!text) return "";
+    const words = text.split(" ");
+    if (words.length <= wordLimit) return text;
+    return words.slice(0, wordLimit).join(" ") + "...";
+  }
   return (
     <>
       <div className="grid md:grid-cols-3 grid-cols-1 gap-8">
@@ -67,7 +74,7 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
                   year: "numeric",
                 })}
               </span>
-              <p className="text-gray-600">{post.excerpt}</p>
+              <p className="text-gray-600">{truncateWords(post.content, 15)}</p>
               <Link
                 className="inline-block rounded-md my-4 py-2 px-4 bg-[#0176CE] text-white font-bold"
                 href={`/${type}/${post.slug}`}
