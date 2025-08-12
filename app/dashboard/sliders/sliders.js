@@ -127,7 +127,11 @@ export default function ListSliders() {
                   <tr key={item.id} className="hover:bg-gray-50">
                     <td className="text-left px-4 py-2">{item.title}</td>
                     <td className="text-left px-4 py-2">
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {new Date(item.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="text-left px-4 py-2 space-x-2">
                       <button

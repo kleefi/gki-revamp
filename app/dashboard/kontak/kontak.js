@@ -98,7 +98,11 @@ export default function ListKontak() {
                     <td className="text-left px-4 py-2">{item.email}</td>
                     <td className="text-left px-4 py-2">{item.message}</td>
                     <td className="text-left px-4 py-2">
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {new Date(item.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="text-left px-4 py-2 space-x-2">
                       <button

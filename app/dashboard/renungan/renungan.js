@@ -124,7 +124,7 @@ export default function ListRenungan() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-100">
-                <th className="text-left px-4 py-2 md:w-2/3">Title</th>
+                <th className="text-left px-4 py-2 md:w-1/2">Title</th>
                 <th className="px-4 py-2 text-left">Date</th>
                 <th className="px-4 py-2 text-left">Action</th>
               </tr>
@@ -135,7 +135,11 @@ export default function ListRenungan() {
                   <tr key={item.id} className="hover:bg-gray-50">
                     <td className="text-left px-4 py-2">{item.title}</td>
                     <td className="text-left px-4 py-2">
-                      {new Date(item.created_at).toLocaleDateString()}
+                      {new Date(item.created_at).toLocaleDateString("id-ID", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
                     </td>
                     <td className="text-left px-4 py-2 space-x-2">
                       <Link
