@@ -1,5 +1,5 @@
 import Link from "next/link";
-import CreateRenungan from "./create";
+import FormRenungan from "../form/FormRenungan";
 export const metadata = {
   title: "Renungan - GKI Kranggan BAJEM Cileungsi",
   description:
@@ -15,7 +15,7 @@ export default function ListRenungan() {
             <Link href="/dashboard/renungan/">List Renungan</Link>
           </span>
         </h1>
-        <CreateRenungan />
+        <FormRenungan />
       </div>
     </div>
   );

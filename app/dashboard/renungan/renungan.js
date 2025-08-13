@@ -52,7 +52,7 @@ export default function ListRenungan() {
   }
 
   function handleEdit(id) {
-    router.push(`/renungan/edit/${id}`);
+    router.push(`/dashboard/renungan/edit/${id}`);
   }
   async function handleDelete(id) {
     if (!confirm("Yakin mau hapus data ini?")) return;

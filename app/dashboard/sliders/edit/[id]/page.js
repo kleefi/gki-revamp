@@ -1,8 +1,10 @@
-"use client";
-
 import Link from "next/link";
 import FormSliders from "../../form/FormSliders";
-
+export const metadata = {
+  title: "Edit Sliders - GKI Kranggan BAJEM Cileungsi",
+  description:
+    "Website official GKI Kranggan BAJEM Cileungsi. Berisi informasi dan kegiatan dari jemaat GKI Kranggan Bajem",
+};
 export default function EditSlider({ params }) {
   return (
     <div className="p-4 sm:ml-64">
