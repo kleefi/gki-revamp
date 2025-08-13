@@ -74,7 +74,7 @@ export default function Hero() {
         }
         autoplay={{
           delay: 5000,
-          disableOnInteraction: false, // Tambahkan ini
+          disableOnInteraction: false,
         }}
         onInit={(swiper) => {
           swiperRef.current = swiper;
