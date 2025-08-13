@@ -27,12 +27,15 @@ export default function TiptapEditor({ content, onChange }) {
       onChange(editor.getHTML());
     },
   });
-
   useEffect(() => {
+    if (!editor) return;
+    if (content) {
+      editor.commands.setContent(content);
+    }
     return () => {
-      if (editor) editor.destroy();
+      editor.destroy();
     };
-  }, [editor]);
+  }, [editor, content]);
 
   if (!editor) return null;
 
