@@ -49,7 +49,7 @@ export default function ListSliders() {
   }
 
   function handleEdit(id) {
-    router.push(`/sliders/edit/${id}`);
+    router.push(`/dashboard/sliders/edit/${id}`);
   }
 
   async function handleDelete(id) {

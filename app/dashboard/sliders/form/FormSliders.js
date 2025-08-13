@@ -1,17 +1,17 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/utils/supabase/client";
 
-export default function CreateSliders() {
+export default function FormSliders({ sliderId }) {
   const [title, setTitle] = useState("");
   const [cta, setCta] = useState("");
   const [type, setType] = useState("sliders");
-  const [content, setContent] = useState("");
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  // buat slug dari title
   const createSlug = (text) =>
     text
       .toLowerCase()
@@ -20,6 +20,31 @@ export default function CreateSliders() {
       .replace(/[^a-z0-9\-]/g, "");
 
   const slug = createSlug(title);
+
+  // fetch data awal kalau sliderId ada (mode edit)
+  useEffect(() => {
+    if (!sliderId) return;
+
+    async function fetchSlider() {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from("sliders")
+        .select("*")
+        .eq("id", sliderId)
+        .single();
+
+      if (error) {
+        setMessage(`Error: ${error.message}`);
+      } else if (data) {
+        setTitle(data.title || "");
+        setCta(data.cta_url || "");
+        setPreviewUrl(data.image_url || "");
+      }
+      setLoading(false);
+    }
+
+    fetchSlider();
+  }, [sliderId]);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -35,13 +60,14 @@ export default function CreateSliders() {
     setMessage("");
 
     try {
-      let imagePath = null;
+      let imagePath = previewUrl;
 
+      // kalau upload gambar baru
       if (file) {
         const filePath = `${type}/${slug}-${Date.now()}-${file.name}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, file);
+          .upload(filePath, file, { upsert: true });
 
         if (uploadError) throw uploadError;
 
@@ -52,21 +78,36 @@ export default function CreateSliders() {
         imagePath = publicUrlData.publicUrl;
       }
 
-      const { error: insertError } = await supabase.from("sliders").insert([
-        {
-          title,
-          cta_url: cta,
-          image_url: imagePath,
-        },
-      ]);
+      if (sliderId) {
+        // MODE EDIT → update
+        const { error: updateError } = await supabase
+          .from("sliders")
+          .update({
+            title,
+            cta_url: cta,
+            image_url: imagePath,
+          })
+          .eq("id", sliderId);
 
-      if (insertError) throw insertError;
+        if (updateError) throw updateError;
+        setMessage("Berhasil update slider!");
+      } else {
+        // MODE CREATE → insert
+        const { error: insertError } = await supabase.from("sliders").insert([
+          {
+            title,
+            cta_url: cta,
+            image_url: imagePath,
+          },
+        ]);
 
-      setMessage("Berhasil menyimpan data!");
-      setTitle("");
-      setCta("");
-      setFile(null);
-      setPreviewUrl("");
+        if (insertError) throw insertError;
+        setMessage("Berhasil menyimpan data!");
+        setTitle("");
+        setCta("");
+        setFile(null);
+        setPreviewUrl("");
+      }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -80,6 +121,7 @@ export default function CreateSliders() {
       className="p-6 bg-white rounded-lg shadow border-2"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* kiri */}
         <div className="space-y-4">
           <div>
             <label className="block font-semibold">Judul</label>
@@ -100,7 +142,6 @@ export default function CreateSliders() {
               className="w-full border rounded px-3 py-2"
             />
           </div>
-
           <div>
             <label className="block font-semibold">Gambar</label>
             <input
@@ -112,6 +153,7 @@ export default function CreateSliders() {
           </div>
         </div>
 
+        {/* kanan */}
         <div className="flex flex-col items-center">
           {previewUrl ? (
             <img
@@ -130,7 +172,13 @@ export default function CreateSliders() {
             disabled={loading}
             className="block w-full cursor-pointer mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "Menyimpan..." : "Simpan"}
+            {loading
+              ? sliderId
+                ? "Mengupdate..."
+                : "Menyimpan..."
+              : sliderId
+              ? "Update"
+              : "Simpan"}
           </button>
         </div>
       </div>
