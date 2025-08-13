@@ -58,7 +58,7 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
           >
             <div className="w-full mx-auto">
               <Image
-                className="object-cover"
+                className="object-cover max-h-[200px]"
                 src={post.image_url || "/default.jpg"}
                 height={50}
                 width={450}

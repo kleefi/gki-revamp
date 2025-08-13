@@ -7,7 +7,12 @@ export default function Slug({ post }) {
     <div>
       <h1 className="lg:text-4xl text-xl font-semibold">{post.title}</h1>
       <p className="mt-2 mb-4 text-black">
-        Created at {new Date(post.created_at).toLocaleDateString()}
+        Published on:{" "}
+        {new Date(post.created_at).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}
       </p>
 
       {post.image_url && (

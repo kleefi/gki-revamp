@@ -14,7 +14,7 @@ export default function Beranda() {
       <div className="w-full mx-auto flex md:mt-0 md:pt-0 pt-24">
         <Hero />
       </div>
-      <div className="bg-gray-100 mb-16">
+      <div className="bg-gray-100 pb-16">
         <div className="max-w-screen-xl mx-auto py-8 px-4">
           <h2 className="text-center font-bold md:text-4xl text-2xl md:mb-8 mb-6 text-gray-700 tracking-wide">
             Jadwal Kebaktian
@@ -45,20 +45,35 @@ export default function Beranda() {
         </div>
       </div>
 
-      <div className="max-w-screen-xl mx-auto my-16">
-        <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
-          Renungan
-        </h2>
-        <Card
-          type="renungan"
-          limit="3"
-          ctaLabel="Selengkapnya"
-          showPagination={false}
-        />
+      <div className="bg-[#ececec]">
+        <div className="max-w-screen-xl mx-auto py-16">
+          <h2 className="font-bold mx-auto md:text-4xl text-xl pb-8 md:w-full w-11/12">
+            Renungan
+          </h2>
+          <Card
+            type="renungan"
+            limit="3"
+            ctaLabel="Selengkapnya"
+            showPagination={false}
+          />
+        </div>
       </div>
       <div className="bg-gray-100 mb-16">
         <div className="max-w-screen-xl mx-auto py-8">
-          <CardAlt />
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-8">
+            <CardAlt
+              type="ewarta"
+              limit="1"
+              showPagination={false}
+              ctaLabel={"Download e-Warta"}
+            />
+            <CardAlt
+              type="eliturgi"
+              limit="1"
+              showPagination={false}
+              ctaLabel={"Download e-Liturgi"}
+            />
+          </div>
         </div>
       </div>
     </div>
