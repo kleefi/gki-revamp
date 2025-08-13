@@ -19,7 +19,6 @@ export default function Hero() {
 
   const prevRef = useRef(null);
   const nextRef = useRef(null);
-  const swiperRef = useRef(null);
 
   useEffect(() => {
     setMounted(true);
@@ -68,7 +67,7 @@ export default function Hero() {
           swiper.params.navigation.prevEl = prevRef.current;
           swiper.params.navigation.nextEl = nextRef.current;
         }}
-        navigation={true}
+        navigation={showNavigation}
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
