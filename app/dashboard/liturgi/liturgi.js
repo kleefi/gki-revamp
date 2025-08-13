@@ -52,7 +52,7 @@ export default function ListLiturgi() {
   }
 
   function handleEdit(id) {
-    router.push(`/liturgi/edit/${id}`);
+    router.push(`/dashboard/liturgi/edit/${id}`);
   }
   async function handleDelete(id) {
     if (!confirm("Yakin mau hapus data ini?")) return;

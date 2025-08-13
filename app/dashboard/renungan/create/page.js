@@ -1,7 +1,7 @@
 import Link from "next/link";
 import FormRenungan from "../form/FormRenungan";
 export const metadata = {
-  title: "Renungan - GKI Kranggan BAJEM Cileungsi",
+  title: "Create Renungan - GKI Kranggan BAJEM Cileungsi",
   description:
     "Website official GKI Kranggan BAJEM Cileungsi. Berisi informasi dan kegiatan dari jemaat GKI Kranggan Bajem",
 };

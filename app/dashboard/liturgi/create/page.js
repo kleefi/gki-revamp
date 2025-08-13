@@ -1,7 +1,7 @@
 import Link from "next/link";
-import CreateLiturgi from "./create";
+import FormLiturgi from "../form/FormLiturgi";
 export const metadata = {
-  title: "eLiturgi - GKI Kranggan BAJEM Cileungsi",
+  title: "Create e-Liturgi - GKI Kranggan BAJEM Cileungsi",
   description:
     "Website official GKI Kranggan BAJEM Cileungsi. Berisi informasi dan kegiatan dari jemaat GKI Kranggan Bajem",
 };
@@ -15,7 +15,7 @@ export default function ListLiturgi() {
             <Link href="/dashboard/liturgi/">List Liturgi</Link>
           </span>
         </h1>
-        <CreateLiturgi />
+        <FormLiturgi />
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import Link from "next/link";
-import CreateWarta from "./create";
+import FormWarta from "../form/FormWarta";
 export const metadata = {
-  title: "e-Warta - GKI Kranggan BAJEM Cileungsi",
+  title: "Create e-Warta - GKI Kranggan BAJEM Cileungsi",
   description:
     "Website official GKI Kranggan BAJEM Cileungsi. Berisi informasi dan kegiatan dari jemaat GKI Kranggan Bajem",
 };
@@ -15,7 +15,7 @@ export default function ListWarta() {
             <Link href="/dashboard/warta/">List Renungan</Link>
           </span>
         </h1>
-        <CreateWarta />
+        <FormWarta />
       </div>
     </div>
   );

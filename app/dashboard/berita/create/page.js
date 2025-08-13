@@ -1,7 +1,7 @@
 import Link from "next/link";
-import CreateBerita from "./create";
+import Formberita from "../form/FormBerita";
 export const metadata = {
-  title: "Berita - GKI Kranggan BAJEM Cileungsi",
+  title: "Create Berita - GKI Kranggan BAJEM Cileungsi",
   description:
     "Website official GKI Kranggan BAJEM Cileungsi. Berisi informasi dan kegiatan dari jemaat GKI Kranggan Bajem",
 };
@@ -15,7 +15,7 @@ export default function ListBerita() {
             <Link href="/dashboard/berita/">List Berita</Link>
           </span>
         </h1>
-        <CreateBerita />
+        <Formberita />
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ export default function ListWarta() {
   }
 
   function handleEdit(id) {
-    router.push(`/warta/edit/${id}`);
+    router.push(`/dashboard/warta/edit/${id}`);
   }
 
   async function handleDelete(id) {

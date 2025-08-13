@@ -52,7 +52,7 @@ export default function ListBerita() {
   }
 
   function handleEdit(id) {
-    router.push(`/berita/edit/${id}`);
+    router.push(`/dashboard/berita/edit/${id}`);
   }
   async function handleDelete(id) {
     if (!confirm("Yakin mau hapus data ini?")) return;

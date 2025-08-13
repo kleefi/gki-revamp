@@ -1,15 +1,16 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
 import TiptapEditor from "@/components/admin/TiptapEditor";
 
-export default function CreateBerita() {
+export default function FormWarta({ id }) {
   const [title, setTitle] = useState("");
   const [cta, setCta] = useState("");
-  const [type, setType] = useState("berita");
+  const [type, setType] = useState("ewarta");
   const [content, setContent] = useState("");
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const [oldImageUrl, setOldImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -21,6 +22,31 @@ export default function CreateBerita() {
       .replace(/[^a-z0-9\-]/g, "");
 
   const slug = createSlug(title);
+
+  // Ambil data lama
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data, error } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setTitle(data.title);
+      setCta(data.cta_link || "");
+      setType(data.type || "ewarta");
+      setContent(data.content || "");
+      setPreviewUrl(data.image_url || "");
+      setOldImageUrl(data.image_url || "");
+    };
+
+    fetchData();
+  }, [id]);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -36,13 +62,13 @@ export default function CreateBerita() {
     setMessage("");
 
     try {
-      let imagePath = null;
+      let imagePath = oldImageUrl;
 
       if (file) {
         const filePath = `${type}/${slug}-${Date.now()}-${file.name}`;
         const { error: uploadError } = await supabase.storage
           .from("images")
-          .upload(filePath, file);
+          .upload(filePath, file, { upsert: true });
 
         if (uploadError) throw uploadError;
 
@@ -53,26 +79,21 @@ export default function CreateBerita() {
         imagePath = publicUrlData.publicUrl;
       }
 
-      const { error: insertError } = await supabase.from("posts").insert([
-        {
+      const { error: updateError } = await supabase
+        .from("posts")
+        .update({
           title,
           type,
           slug,
           content,
           cta_link: cta,
           image_url: imagePath,
-        },
-      ]);
+        })
+        .eq("id", id);
 
-      if (insertError) throw insertError;
+      if (updateError) throw updateError;
 
-      setMessage("Berhasil menyimpan data!");
-      setTitle("");
-      setCta("");
-      setType("berita");
-      setContent("");
-      setFile(null);
-      setPreviewUrl("");
+      setMessage("Berhasil mengupdate data!");
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -141,7 +162,7 @@ export default function CreateBerita() {
             disabled={loading}
             className="block w-full cursor-pointer mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "Menyimpan..." : "Simpan"}
+            {loading ? "Menyimpan..." : "Update"}
           </button>
         </div>
       </div>
