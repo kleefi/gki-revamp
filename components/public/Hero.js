@@ -64,23 +64,14 @@ export default function Hero() {
     <div className="relative w-full">
       <Swiper
         modules={[Navigation, Autoplay]}
-        navigation={
-          showNavigation
-            ? {
-                prevEl: prevRef.current,
-                nextEl: nextRef.current,
-              }
-            : false
-        }
+        onBeforeInit={(swiper) => {
+          swiper.params.navigation.prevEl = prevRef.current;
+          swiper.params.navigation.nextEl = nextRef.current;
+        }}
+        navigation={true}
         autoplay={{
           delay: 5000,
           disableOnInteraction: false,
-        }}
-        onInit={(swiper) => {
-          swiperRef.current = swiper;
-          // Perbaikan untuk production
-          swiper.navigation.init();
-          swiper.navigation.update();
         }}
         loop={showNavigation}
         slidesPerView={1}
@@ -88,14 +79,15 @@ export default function Hero() {
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-[400px] md:h-[600px]">
+            <div className="relative w-full">
               <Image
                 src={slide.image_url}
-                fill
                 alt={slide.alt_text || "Slider Image"}
                 priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 100vw"
-                className="object-cover"
+                width={1920}
+                height={1080}
+                sizes="100vw"
+                className="w-full h-auto object-cover md:h-[600px]"
               />
             </div>
           </SwiperSlide>
