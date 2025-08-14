@@ -41,7 +41,7 @@ export default function CardGaleri({ limit, ctaLabel, showPagination = true }) {
   }
 
   if (loading) return <Loading />;
-  if (albums.length === 0) return <p>Tidak ada data {type}</p>;
+  if (albums.length === 0) return <p>Tidak ada data galeri</p>;
   function truncateWords(text, wordLimit) {
     if (!text) return "";
     const words = text.split(" ");
