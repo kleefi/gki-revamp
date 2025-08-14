@@ -1,3 +1,5 @@
+import DashboardPage from "./dashboard";
+
 export const metadata = {
   title: "Dashboard - GKI Kranggan BAJEM Cileungsi",
   description:
@@ -6,8 +8,8 @@ export const metadata = {
 export default function Dashboard() {
   return (
     <div className="p-4 sm:ml-64">
-      <div className="p-4 rounded-lg mt-14">
-        <h1>Dashboard</h1>
+      <div className="mt-14">
+        <DashboardPage />
       </div>
     </div>
   );
