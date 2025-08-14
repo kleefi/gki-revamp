@@ -73,7 +73,7 @@ export default function ListSliders() {
 
       // 3. Hapus gambar dari storage
       const { error: storageError } = await supabase.storage
-        .from("images") // ganti dengan nama bucket Anda
+        .from("images")
         .remove([fullPath]);
 
       if (storageError) throw storageError;

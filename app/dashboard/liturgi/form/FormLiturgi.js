@@ -23,8 +23,10 @@ export default function FormLiturgi({ id }) {
 
   const slug = createSlug(title);
 
-  // Ambil data lama
+  // Ambil data lama kalau edit
   useEffect(() => {
+    if (!id) return; // kalau create, skip fetch
+
     const fetchData = async () => {
       const { data, error } = await supabase
         .from("posts")
@@ -79,21 +81,45 @@ export default function FormLiturgi({ id }) {
         imagePath = publicUrlData.publicUrl;
       }
 
-      const { error: updateError } = await supabase
-        .from("posts")
-        .update({
-          title,
-          type,
-          slug,
-          content,
-          cta_link: cta,
-          image_url: imagePath,
-        })
-        .eq("id", id);
+      if (id) {
+        // MODE UPDATE
+        const { error: updateError } = await supabase
+          .from("posts")
+          .update({
+            title,
+            type,
+            slug,
+            content,
+            cta_link: cta,
+            image_url: imagePath,
+          })
+          .eq("id", id);
 
-      if (updateError) throw updateError;
+        if (updateError) throw updateError;
+        setMessage("Berhasil mengupdate data!");
+      } else {
+        // MODE CREATE
+        const { error: insertError } = await supabase.from("posts").insert([
+          {
+            title,
+            type,
+            slug,
+            content,
+            cta_link: cta,
+            image_url: imagePath,
+          },
+        ]);
 
-      setMessage("Berhasil mengupdate data!");
+        if (insertError) throw insertError;
+        setMessage("Berhasil membuat data!");
+        setTitle("");
+        setCta("");
+        setType("eliturgi");
+        setContent("");
+        setFile(null);
+        setPreviewUrl("");
+        setOldImageUrl("");
+      }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
     } finally {
@@ -162,7 +188,7 @@ export default function FormLiturgi({ id }) {
             disabled={loading}
             className="block w-full cursor-pointer mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
           >
-            {loading ? "Menyimpan..." : "Update"}
+            {loading ? "Menyimpan..." : id ? "Update" : "Create"}
           </button>
         </div>
       </div>

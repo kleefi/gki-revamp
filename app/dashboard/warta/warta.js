@@ -77,7 +77,7 @@ export default function ListWarta() {
           const fullPath = folderPath ? `${folderPath}/${fileName}` : fileName;
 
           const { error: storageError } = await supabase.storage
-            .from("images") // ganti dengan nama bucket Anda
+            .from("images")
             .remove([fullPath]);
 
           if (storageError) console.warn("Gagal hapus gambar:", storageError);
