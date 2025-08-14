@@ -1,14 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase/client";
-import TiptapEditor from "@/components/admin/TiptapEditor";
 
 export default function FormGaleri({ id }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [file, setFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState("");
-  const [oldImageUrl, setOldImageUrl] = useState("");
+  const [coverFile, setCoverFile] = useState(null);
+  const [coverPreview, setCoverPreview] = useState("");
+  const [oldCoverUrl, setOldCoverUrl] = useState("");
+  const [galleryFiles, setGalleryFiles] = useState([]);
+  const [galleryPreview, setGalleryPreview] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -23,7 +24,7 @@ export default function FormGaleri({ id }) {
 
   // Ambil data lama kalau edit
   useEffect(() => {
-    if (!id) return; // skip kalau create
+    if (!id) return;
 
     const fetchData = async () => {
       const { data, error } = await supabase
@@ -39,19 +40,53 @@ export default function FormGaleri({ id }) {
 
       setTitle(data.title);
       setDescription(data.description);
-      setPreviewUrl(data.image_url || "");
-      setOldImageUrl(data.image_url || "");
+      setCoverPreview(data.image_url || "");
+      setOldCoverUrl(data.image_url || "");
+
+      // Ambil gambar dari tabel images
+      const { data: imagesData, error: imagesError } = await supabase
+        .from("images")
+        .select("*")
+        .eq("album_id", id);
+
+      if (!imagesError && imagesData) {
+        setGalleryPreview(imagesData.map((img) => img.image_url));
+      }
     };
 
     fetchData();
   }, [id]);
 
-  const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-    setFile(selectedFile);
-    if (selectedFile) {
-      setPreviewUrl(URL.createObjectURL(selectedFile));
+  const handleCoverChange = (e) => {
+    const file = e.target.files[0];
+    setCoverFile(file);
+    if (file) {
+      setCoverPreview(URL.createObjectURL(file));
     }
+  };
+
+  const handleGalleryChange = (e) => {
+    const files = Array.from(e.target.files);
+    setGalleryFiles(files);
+    setGalleryPreview((prev) => [
+      ...prev,
+      ...files.map((file) => URL.createObjectURL(file)),
+    ]);
+  };
+
+  const uploadFileToStorage = async (file, folderSlug) => {
+    const filePath = `${folderSlug}/${Date.now()}-${file.name}`;
+    const { error: uploadError } = await supabase.storage
+      .from("images")
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) throw uploadError;
+
+    const { data: publicUrlData } = supabase.storage
+      .from("images")
+      .getPublicUrl(filePath);
+
+    return publicUrlData.publicUrl;
   };
 
   const handleSubmit = async (e) => {
@@ -60,55 +95,75 @@ export default function FormGaleri({ id }) {
     setMessage("");
 
     try {
-      let imagePath = oldImageUrl;
+      let coverUrl = oldCoverUrl;
 
-      if (file) {
-        const filePath = `albums/${slug}-${Date.now()}-${file.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("images")
-          .upload(filePath, file, { upsert: true });
-
-        if (uploadError) throw uploadError;
-
-        const { data: publicUrlData } = supabase.storage
-          .from("images")
-          .getPublicUrl(filePath);
-
-        imagePath = publicUrlData.publicUrl;
+      // Upload cover kalau ada file baru
+      if (coverFile) {
+        coverUrl = await uploadFileToStorage(coverFile, `albums/${slug}`);
       }
 
-      if (id) {
-        // MODE UPDATE
+      let albumId = id;
+
+      if (!id) {
+        // CREATE ALBUM
+        const { data: albumData, error: insertError } = await supabase
+          .from("albums")
+          .insert([
+            {
+              title,
+              description,
+              slug,
+              image_url: coverUrl,
+            },
+          ])
+          .select("id")
+          .single();
+
+        if (insertError) throw insertError;
+        albumId = albumData.id;
+      } else {
+        // UPDATE ALBUM
         const { error: updateError } = await supabase
           .from("albums")
           .update({
             title,
             description,
             slug,
-            image_url: imagePath,
+            image_url: coverUrl,
           })
           .eq("id", id);
 
         if (updateError) throw updateError;
-        setMessage("Berhasil mengupdate data!");
-      } else {
-        // MODE CREATE
-        const { error: insertError } = await supabase.from("albums").insert([
-          {
-            title,
-            description,
-            slug,
-            image_url: imagePath,
-          },
-        ]);
+      }
 
-        if (insertError) throw insertError;
-        setMessage("Berhasil membuat data!");
+      // Upload semua file gallery baru ke tabel images
+      if (galleryFiles.length > 0) {
+        const imagesToInsert = [];
+        for (const file of galleryFiles) {
+          const imgUrl = await uploadFileToStorage(file, `albums/${slug}`);
+          imagesToInsert.push({
+            album_id: albumId,
+            image_url: imgUrl,
+            description: "",
+          });
+        }
+
+        const { error: imgInsertError } = await supabase
+          .from("images")
+          .insert(imagesToInsert);
+
+        if (imgInsertError) throw imgInsertError;
+      }
+
+      setMessage(id ? "Album berhasil diupdate!" : "Album berhasil dibuat!");
+      if (!id) {
         setTitle("");
         setDescription("");
-        setFile(null);
-        setPreviewUrl("");
-        setOldImageUrl("");
+        setCoverFile(null);
+        setCoverPreview("");
+        setGalleryFiles([]);
+        setGalleryPreview([]);
+        setOldCoverUrl("");
       }
     } catch (error) {
       setMessage(`Error: ${error.message}`);
@@ -120,64 +175,77 @@ export default function FormGaleri({ id }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-6 bg-white rounded-lg shadow border-2"
+      className="p-6 bg-white rounded-lg shadow border-2 space-y-6"
     >
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-4">
-          <div>
-            <label className="block font-semibold">Judul</label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-          <div>
-            <label className="block font-semibold">Description</label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full border rounded px-3 py-2"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block font-semibold">Gambar</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="w-full border-2 rounded-lg px-8 py-4 cursor-pointer"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center">
-          {previewUrl ? (
-            <img
-              src={previewUrl}
-              alt="Preview"
-              className="w-full rounded-lg shadow"
-            />
-          ) : (
-            <div className="w-full h-64 bg-gray-100 flex items-center justify-center rounded-lg">
-              <span className="text-gray-500">Preview gambar</span>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="block w-full cursor-pointer mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Menyimpan..." : id ? "Update" : "Create"}
-          </button>
-        </div>
+      <div>
+        <label className="block font-semibold">Judul</label>
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full border rounded px-3 py-2"
+          required
+        />
       </div>
+
+      <div>
+        <label className="block font-semibold">Deskripsi</label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full border rounded px-3 py-2"
+          required
+        />
+      </div>
+
+      <div>
+        <label className="block font-semibold">Cover Album</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleCoverChange}
+          className="w-full border-2 rounded-lg px-8 py-4 cursor-pointer"
+        />
+        {coverPreview && (
+          <img
+            src={coverPreview}
+            alt="Cover Preview"
+            className="mt-2 w-full rounded-lg shadow"
+          />
+        )}
+      </div>
+
+      <div>
+        <label className="block font-semibold">Foto Galeri</label>
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleGalleryChange}
+          className="w-full border-2 rounded-lg px-8 py-4 cursor-pointer"
+        />
+        {galleryPreview.length > 0 && (
+          <div className="grid grid-cols-3 gap-4 mt-2">
+            {galleryPreview.map((url, idx) => (
+              <img
+                key={idx}
+                src={url}
+                alt={`Preview ${idx}`}
+                className="w-full h-32 object-cover rounded-lg shadow"
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
+      >
+        {loading ? "Menyimpan..." : id ? "Update" : "Create"}
+      </button>
 
       {message && (
         <p className="mt-4 text-center font-medium text-green-600">{message}</p>

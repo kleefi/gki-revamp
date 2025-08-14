@@ -53,48 +53,60 @@ export default function ListGaleri() {
     router.push(`/dashboard/galeri/edit/${id}`);
   }
   async function handleDelete(id) {
-    if (!confirm("Yakin mau hapus data ini?")) return;
+    if (!confirm("Yakin mau hapus data ini beserta semua fotonya?")) return;
+
     try {
-      const { data: sliderData, error: fetchError } = await supabase
+      // 1️⃣ Ambil cover album
+      const { data: albumData, error: albumError } = await supabase
         .from("albums")
         .select("image_url")
         .eq("id", id)
         .single();
 
-      if (fetchError) throw fetchError;
+      if (albumError) throw albumError;
 
-      // 2. Kalau ada gambar, coba hapus dari storage
-      if (sliderData?.image_url) {
-        try {
-          const urlParts = sliderData.image_url.split("/");
-          const fileName = urlParts[urlParts.length - 1];
-          const folderPath = urlParts
-            .slice(urlParts.indexOf("images") + 1, -1)
-            .join("/");
-          const fullPath = folderPath ? `${folderPath}/${fileName}` : fileName;
+      // 2️⃣ Ambil semua foto gallery
+      const { data: imagesData, error: imagesError } = await supabase
+        .from("images")
+        .select("image_url")
+        .eq("album_id", id);
 
-          const { error: storageError } = await supabase.storage
-            .from("images")
-            .remove([fullPath]);
+      if (imagesError) throw imagesError;
 
-          if (storageError) console.warn("Gagal hapus gambar:", storageError);
-        } catch (imgErr) {
-          console.warn("Error saat parsing atau hapus gambar:", imgErr);
-        }
+      // 3️⃣ Gabungkan semua URL jadi satu array
+      const allUrls = [
+        albumData?.image_url,
+        ...imagesData.map((img) => img.image_url),
+      ].filter(Boolean); // buang yang null/undefined
+
+      // 4️⃣ Ubah dari public URL → path di storage
+      const storagePaths = allUrls.map((url) =>
+        url.replace(
+          `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/images/`,
+          ""
+        )
+      );
+
+      // 5️⃣ Hapus file dari storage
+      if (storagePaths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from("images")
+          .remove(storagePaths);
+        if (storageError) console.warn("Gagal hapus file:", storageError);
       }
 
-      // 3. Hapus data dari tabel
-      const { error: deleteError } = await supabase
-        .from("albums")
-        .delete()
-        .eq("id", id);
+      // 6️⃣ Hapus semua foto dari tabel `images`
+      await supabase.from("images").delete().eq("album_id", id);
 
-      if (deleteError) throw deleteError;
+      // 7️⃣ Hapus album dari tabel `albums`
+      await supabase.from("albums").delete().eq("id", id);
 
-      // 4. Update state lokal
+      // 8️⃣ Update state lokal
       setAlbums((prev) => prev.filter((post) => post.id !== id));
+
+      alert("Album dan semua fotonya sudah dihapus!");
     } catch (error) {
-      console.error("Error deleting post and/or image:", error);
+      console.error("Error deleting album:", error);
     }
   }
 
@@ -143,7 +155,7 @@ export default function ListGaleri() {
                     </td>
                     <td className="text-left px-4 py-2 space-x-2">
                       <Link
-                        href={`/albums/${item.slug}`}
+                        href={`/galeri/${item.slug}`}
                         target="_blank"
                         className="cursor-pointer bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded inline-flex items-center gap-1"
                       >
