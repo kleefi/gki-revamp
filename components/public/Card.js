@@ -14,6 +14,9 @@ export default function Card({ type, limit, ctaLabel, showPagination = true }) {
   useEffect(() => {
     if (type) {
       fetchPosts(page);
+      if (page >= 1) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   }, [type, page, limit]);
 
