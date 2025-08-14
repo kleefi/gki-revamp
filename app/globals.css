@@ -35,6 +35,11 @@ p {
 .tiptap ol {
   padding: 0 1rem;
 }
+.slick-prev,
+.slick-next {
+  display: block !important;
+  z-index: 50;
+}
 .loader {
   width: 45px;
   aspect-ratio: 1;
