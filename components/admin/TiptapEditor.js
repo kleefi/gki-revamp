@@ -29,13 +29,13 @@ export default function TiptapEditor({ content, onChange }) {
   });
   useEffect(() => {
     if (!editor) return;
-    if (content) {
+    if (content && editor) {
       editor.commands.setContent(content);
     }
     return () => {
       editor.destroy();
     };
-  }, [editor, content]);
+  }, [editor]);
 
   if (!editor) return null;
 
