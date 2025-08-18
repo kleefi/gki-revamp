@@ -1,4 +1,4 @@
-# GKI Baja EM Cileungsi — Website Revamp
+# GKI Bajem Cileungsi — Website Revamp
 
 Revamp website **[gkibajemcileungsi.org](https://gkibajemcileungsi.org/)** dari **WordPress** menjadi **Next.js** dengan backend **Supabase**.  
 Tujuannya adalah untuk meningkatkan performa, fleksibilitas, keamanan, dan kemudahan pengelolaan konten.
