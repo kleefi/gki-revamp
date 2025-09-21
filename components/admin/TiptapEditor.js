@@ -6,7 +6,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import { useEffect } from "react";
 
 export default function TiptapEditor({ content, onChange }) {
-  const editor = useEditor({
+   const editor = useEditor({
     extensions: [
       StarterKit.configure({
         // Pastikan semua fitur StarterKit diaktifkan
@@ -22,20 +22,27 @@ export default function TiptapEditor({ content, onChange }) {
       }),
     ],
     content: content || "",
+    editorProps: {
+      attributes: {
+        class: "prose prose-sm max-w-none focus:outline-none px-3 py-2",
+      },
+    },
+    // Solusi untuk error SSR
     immediatelyRender: false,
+
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
     },
   });
   useEffect(() => {
-    if (!editor) return;
-    if (content) {
-      editor.commands.setContent(content);
+    if (editor && content !== editor.getHTML()) {
+      editor.commands.setContent(content || "");
     }
-    return () => {
-      editor.destroy();
-    };
-  }, [editor, content]);
+  }, [content, editor]);
+
+  if (!editor) {
+    return <div>Loading editor...</div>;
+  }
 
   if (!editor) return null;
 
