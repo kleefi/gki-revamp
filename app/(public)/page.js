@@ -39,7 +39,7 @@ export default function Beranda() {
               <h3 className="text-xl font-semibold mb-2 text-gray-800">
                 Kebaktian Umum
               </h3>
-              <p className="text-md font-medium text-gray-600">08.00 WIB</p>
+              <p className="text-md font-medium text-gray-600">10.00 WIB</p>
             </div>
           </div>
         </div>
