@@ -32,9 +32,12 @@ export default function CardAlt({
 
     const { data, error, count } = await supabase
       .from("posts")
-      .select("id, title, created_at, image_url, slug,content,cta_link", {
-        count: "exact",
-      })
+      .select(
+        "id, title,content, created_at, image_url, slug,content,cta_link",
+        {
+          count: "exact",
+        }
+      )
       .eq("type", type)
       .order("created_at", { ascending: false })
       .range(from, to);
@@ -75,11 +78,7 @@ export default function CardAlt({
           <div>
             <h3 className="text-xl font-semibold mb-2 mt-2">{post.title}</h3>
             <span className="block pb-2">
-              {new Date(post.created_at).toLocaleDateString("id-ID", {
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
             </span>
             <div
               className="prose max-w-none hidden"
