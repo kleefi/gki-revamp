@@ -1,0 +1,1 @@
+INSERT INTO "public"."sliders" ("id", "title", "image_url", "cta_url", "created_at") VALUES ('c98dc58b-a59d-4194-874d-c87bc2b760e0', 'Kebaktian', 'https://jomufhortxbdgeescdre.supabase.co/storage/v1/object/public/images/sliders/kebaktian-1767448579780-Abu-Abu%20Hitam%20Modern%20Keindahan%20Arsitektur%20YouTube%20Thumbnail%20(1).jpg', '', '2025-11-29 16:05:49.324124+00');

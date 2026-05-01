@@ -1,0 +1,1 @@
+INSERT INTO "public"."users" ("id", "name", "created_at") VALUES ('f720a94f-5d4e-4522-9a6d-e8b827f212fa', 'Charles Simanjuntak', '2025-08-11 08:14:22.246655+00');

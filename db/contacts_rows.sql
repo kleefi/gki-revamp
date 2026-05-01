@@ -1,0 +1,1 @@
+INSERT INTO "public"."contacts" ("id", "name", "email", "phone", "message", "created_at") VALUES ('72f414fe-4063-42c8-80ba-045ea2b2c2d9', 'test', 'test@email.com', '085355139497', 'test message', '2026-05-01 05:11:12.825895+00');
